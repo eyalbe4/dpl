@@ -49,6 +49,10 @@ module DPL
         end
       end
 
+      def dry_run?
+        dry_run
+      end
+
       def read_descriptor
         log "Reading descriptor file: #{file}"
         @descriptor = JSON.parse(File.read(file))
@@ -110,7 +114,7 @@ module DPL
       def upload_file(artifact)
         log "Uploading file '#{artifact.local_path}' to #{artifact.upload_path}"
 
-        if dry_run
+        if dry_run?
           return
         end
 
@@ -136,7 +140,7 @@ module DPL
 
       def package_exists?
         path = package_exists_path
-        if !dry_run
+        if !dry_run?
           res = head_request(path)
           code = res.code.to_i
         else
@@ -166,7 +170,7 @@ module DPL
 
       def version_exists?
         path = version_exists_path
-        if !dry_run
+        if !dry_run?
           res = head_request(path)
           code = res.code.to_i
         else
@@ -203,7 +207,7 @@ module DPL
         log "Creating package '#{package_name}'..."
 
         path = "/packages/#{subject}/#{repo}"
-        if !dry_run
+        if !dry_run?
           res = post_request(path, body)
           log_bintray_response(res)
           code = res.code.to_i
@@ -229,7 +233,7 @@ module DPL
         if !attributes.nil?
           log "Adding attributes for package '#{package_name}'..."
           path = "/packages/#{subject}/#{repo}/#{package_name}/attributes"
-          if !dry_run
+          if !dry_run?
             res = post_request(path, attributes)
             log_bintray_response(res)
           end
@@ -257,7 +261,7 @@ module DPL
         log "Creating version '#{version_name}'..."
 
         path = "/packages/#{subject}/#{repo}/#{package_name}/versions"
-        if !dry_run
+        if !dry_run?
           res = post_request(path, body)
           log_bintray_response(res)
           code = res.code.to_i
@@ -285,7 +289,7 @@ module DPL
         if !attributes.nil?
           log "Adding attributes for version '#{version_name}'..."
           path = "/packages/#{subject}/#{repo}/#{package_name}/versions/#{version_name}/attributes"
-          if !dry_run
+          if !dry_run?
             res = post_request(path, attributes)
             log_bintray_response(res)
           end
@@ -325,7 +329,7 @@ module DPL
 
           log "Publishing version '#{version_name}' of package '#{package_name}'..."
           path = "/content/#{subject}/#{repo}/#{package_name}/#{version_name}/publish"
-          if !dry_run
+          if !dry_run?
             res = post_request(path, nil)
             log_bintray_response(res)
           end
@@ -353,7 +357,7 @@ module DPL
           end
 
           path = "/gpg/#{subject}/#{repo}/#{package_name}/versions/#{version_name}"
-          if !dry_run
+          if !dry_run?
             res = post_request(path, body)
             log_bintray_response(res)
           end
